@@ -2,21 +2,14 @@ local function sendCombatReport(payload)
     TriggerServerEvent("combat:report", payload)
 end
 
--- detect damage
+-- detect damage - https://forum.cfx.re/t/some-game-events-and-how-to-use-them/4430331
 AddEventHandler("gameEventTriggered", function(name, args)
     if not name or not args then return end
-    if name == "CEventNetworkEntityDamage" or name == "CEventDamage" then
+    if name == "CEventNetworkEntityDamage" then
         local victimNetId = args[1]
         local attackerNetId = args[2]
-        local weaponHash = args[3]
-        local damageAmount = 0
-        -- find index for damage
-        for i = 4, #args do
-            if type(args[i]) == "number" then
-                damageAmount = args[i]
-                break
-            end
-        end
+        local damageAmount = args[6]
+        local weaponHash = args[7]
 
         local victim = NetworkGetEntityFromNetworkId(victimNetId)
         local attacker = NetworkGetEntityFromNetworkId(attackerNetId)
