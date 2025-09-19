@@ -1,5 +1,13 @@
 local Games = {}
 
+Games.weapons = {}
+Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
+Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
+
+local function getWeaponName(weaponHash)
+    return Games.weapons[weaponHash] or 'Unknown'
+end
+
 Games.data = {
     ['matchmaking-01'] = {
         players = {
@@ -85,6 +93,16 @@ local function nextRound(roundId)
     game.rounds.data[roundId] = {}
 end
 
+local function getPlayerName(player)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    local playerData = game.players.data
+    if not playerData then return end
+    local player = playerData.attackers[player] or playerData.defenders[player]
+    if not player then return end
+    return player.nick
+end
+
 local function insertCombatReport(victim, report)
     local game = Games.data['matchmaking-01']
     if not game then return end
@@ -94,11 +112,10 @@ local function insertCombatReport(victim, report)
     table.insert(game.rounds.data[roundId], report)
 end
 
-local function getPlayerRoundReport(player)
+local function getPlayerRoundReport(player, roundId)
     local game = Games.data['matchmaking-01']
     if not game then return end
-    local roundId = game.rounds.current
-    if roundId == 0 then return end
+    if not roundId then return end
     local reports = game.rounds.data[roundId]
     if not reports then return end
     local playerReport = {}
@@ -108,10 +125,11 @@ local function getPlayerRoundReport(player)
             -- ensure attacker report
             if not playerReport[report.attacker] then
                 playerReport[report.attacker] = {
+                    name = getPlayerName(report.attacker),
                     damageTaken = 0,
                     damageDone = 0,
                     weaponHash = report.weaponHash,
-                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                    weaponModel = getWeaponName(report.weaponHash),
                 }
             end
 
@@ -123,14 +141,15 @@ local function getPlayerRoundReport(player)
             -- ensure victim report
             if not playerReport[report.victim] then
                 playerReport[report.victim] = {
+                    name = getPlayerName(report.victim),
                     damageTaken = 0,
                     damageDone = 0,
                     weaponHash = 0,
-                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                    weaponModel = getWeaponName(report.weaponHash)
                 }
             end
             playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
-            playerReport[report.attacker].weaponHash = report.weaponHash
+            playerReport[report.victim].weaponHash = report.weaponHash
         end
     end
     return playerReport
