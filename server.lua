@@ -71,7 +71,31 @@ Games.data = {
     }
 }
 
+local function startRound(roundId)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    game.rounds.current = roundId
+    game.rounds.data[roundId] = {}
+end
+
+local function endRound(roundId)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    game.rounds.current = 0
+    game.rounds.data[roundId] = nil
+end
+
+local function insertCombatReport(victim, report)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    local roundId = game.rounds.current
+    if roundId == 0 then return end
+    report.victim = victim
+    table.insert(game.rounds.data[roundId], report)
+end
+
 RegisterNetEvent("combat:report")
 AddEventHandler("combat:report", function(payload)
     local src = source
+    insertCombatReport(src, payload)
 end)
