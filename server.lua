@@ -94,6 +94,33 @@ local function insertCombatReport(victim, report)
     table.insert(game.rounds.data[roundId], report)
 end
 
+local function getPlayerRoundReport(player)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    local roundId = game.rounds.current
+    if roundId == 0 then return end
+    local reports = game.rounds.data[roundId]
+    if not reports then return end
+    -- map all damages on round
+    local myReport = {}
+    for _, report in ipairs(reports) do
+        if report.victim == player then
+            -- ensure attacker report
+            if not myReport[report.attacker] then
+                myReport[report.attacker] = {
+                    attacker = report.attacker,
+                    amount = 0,
+                    weaponHash = report.weaponHash,
+                    weaponModel = report.weaponModel,
+                    timestamp = report.timestamp
+                }
+            end
+            myReport[report.attacker].amount = myReport[report.attacker].amount + report.amount
+        end
+    end
+    return myReport
+end
+
 RegisterNetEvent("combat:report")
 AddEventHandler("combat:report", function(payload)
     local src = source

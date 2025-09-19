@@ -27,7 +27,6 @@ AddEventHandler("gameEventTriggered", function(name, args)
                 attacker = GetPlayerServerId(attacker),
                 amount = damageAmount,
                 weaponHash = weaponHash,
-                weaponModel = "",
                 timestamp = os.time()
             })
         end
