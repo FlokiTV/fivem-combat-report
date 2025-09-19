@@ -32,3 +32,9 @@ AddEventHandler("gameEventTriggered", function(name, args)
         end
     end
 end)
+
+-- receive player round report
+RegisterNetEvent("combat:playerReport")
+AddEventHandler("combat:playerReport", function(playerReport)
+    print("playerReport", playerReport)
+end)
