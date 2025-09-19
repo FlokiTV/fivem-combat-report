@@ -4,6 +4,28 @@ Games.weapons = {}
 Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
 Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
 
+Games.bones = {}
+Games.bones[1] = {
+    name = 'SKEL_R_HAND',
+    group = "chest"
+}
+Games.bones[2] = {
+    name = 'SKEL_L_HAND',
+    group = "chest"
+}
+Games.bones[3] = {
+    name = 'SKEL_R_FOOT',
+    group = "foot"
+}
+Games.bones[4] = {
+    name = 'SKEL_L_FOOT',
+    group = "foot"
+}
+Games.bones[5] = {
+    name = 'SKEL_HEAD',
+    group = "head"
+}
+
 local function getWeaponName(weaponHash)
     return Games.weapons[weaponHash] or 'Unknown'
 end
@@ -128,13 +150,51 @@ local function getPlayerRoundReport(player, roundId)
                     name = getPlayerName(report.attacker),
                     damageTaken = 0,
                     damageDone = 0,
+                    damageBonesTaken = {
+                        head = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        chest = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        foot = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                    },
+                    damageBonesDone = {
+                        head = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        chest = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        foot = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                    },
                     weaponHash = report.weaponHash,
-                    weaponModel = getWeaponName(report.weaponHash),
+                    weaponModel = getWeaponName(report.weaponHash)
                 }
             end
 
             playerReport[report.attacker].damageTaken = playerReport[report.attacker].damageTaken + report.amount
             playerReport[report.attacker].weaponHash = report.weaponHash
+            -- map damage by bone
+            if report.hitBone then
+                local boneGroup = Games.bones[report.hitBone].group
+                if boneGroup then
+                    playerReport[report.attacker].damageBonesTaken[boneGroup].damage = playerReport[report.attacker]
+                    .damageBonesTaken[boneGroup].damage + report.amount
+                    playerReport[report.attacker].damageBonesTaken[boneGroup].hits = playerReport[report.attacker]
+                    .damageBonesTaken[boneGroup].hits + 1
+                end
+            end
         end
         -- map all damage done on round
         if report.attacker == player then
@@ -145,11 +205,50 @@ local function getPlayerRoundReport(player, roundId)
                     damageTaken = 0,
                     damageDone = 0,
                     weaponHash = 0,
+                    damageBonesTaken = {
+                        head = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        chest = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        foot = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                    },
+                    damageBonesDone = {
+                        head = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        chest = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                        foot = {
+                            damage = 0,
+                            hits = 0,
+                        },
+                    },
                     weaponModel = getWeaponName(report.weaponHash)
                 }
             end
+            
             playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
             playerReport[report.victim].weaponHash = report.weaponHash
+            -- map damage by bone
+            if report.hitBone then
+                local boneGroup = Games.bones[report.hitBone].group
+                if boneGroup then
+                    playerReport[report.victim].damageBonesDone[boneGroup].damage = playerReport[report.victim]
+                    .damageBonesDone[boneGroup].damage + report.amount
+                    playerReport[report.victim].damageBonesDone[boneGroup].hits = playerReport[report.victim]
+                    .damageBonesDone[boneGroup].hits + 1
+                end
+            end
         end
     end
     return playerReport
