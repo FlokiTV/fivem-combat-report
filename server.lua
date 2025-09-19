@@ -4,6 +4,28 @@ Games.weapons = {}
 Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
 Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
 
+Games.bones = {}
+Games.bones[1] = {
+    name = 'SKEL_R_HAND',
+    group = "chest"
+}
+Games.bones[2] = {
+    name = 'SKEL_L_HAND',
+    group = "chest"
+}
+Games.bones[3] = {
+    name = 'SKEL_R_FOOT',
+    group = "foot"
+}
+Games.bones[4] = {
+    name = 'SKEL_L_FOOT',
+    group = "foot"
+}
+Games.bones[5] = {
+    name = 'SKEL_HEAD',
+    group = "head"
+}
+
 local function getWeaponName(weaponHash)
     return Games.weapons[weaponHash] or 'Unknown'
 end
