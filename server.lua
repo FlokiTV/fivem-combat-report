@@ -70,3 +70,81 @@ Games.data = {
         }
     }
 }
+
+local function startRound(roundId)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    game.rounds.current = roundId
+    game.rounds.data[roundId] = {}
+end
+
+local function nextRound(roundId)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    game.rounds.current = roundId + 1
+    game.rounds.data[roundId] = {}
+end
+
+local function insertCombatReport(victim, report)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    local roundId = game.rounds.current
+    if roundId == 0 then return end
+    report.victim = victim
+    table.insert(game.rounds.data[roundId], report)
+end
+
+local function getPlayerRoundReport(player)
+    local game = Games.data['matchmaking-01']
+    if not game then return end
+    local roundId = game.rounds.current
+    if roundId == 0 then return end
+    local reports = game.rounds.data[roundId]
+    if not reports then return end
+    local playerReport = {}
+    for _, report in ipairs(reports) do
+        -- map all damage taken on round
+        if report.victim == player then
+            -- ensure attacker report
+            if not playerReport[report.attacker] then
+                playerReport[report.attacker] = {
+                    damageTaken = 0,
+                    damageDone = 0,
+                    weaponHash = report.weaponHash,
+                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                }
+            end
+
+            playerReport[report.attacker].damageTaken = playerReport[report.attacker].damageTaken + report.amount
+            playerReport[report.attacker].weaponHash = report.weaponHash
+        end
+        -- map all damage done on round
+        if report.attacker == player then
+            -- ensure victim report
+            if not playerReport[report.victim] then
+                playerReport[report.victim] = {
+                    damageTaken = 0,
+                    damageDone = 0,
+                    weaponHash = 0,
+                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                }
+            end
+            playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
+            playerReport[report.attacker].weaponHash = report.weaponHash
+        end
+    end
+    return playerReport
+end
+
+RegisterNetEvent("combat:report")
+AddEventHandler("combat:report", function(payload)
+    local src = source
+    insertCombatReport(src, payload)
+end)
+
+RegisterNetEvent("combat:requestPlayerReport")
+AddEventHandler("combat:requestPlayerReport", function(payload)
+    local src = source
+    local playerReport = getPlayerRoundReport(src)
+    TriggerClientEvent("combat:playerReport", src, playerReport)
+end)
