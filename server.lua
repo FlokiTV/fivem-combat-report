@@ -141,7 +141,7 @@ local function getPlayerRoundReport(player, roundId)
                 }
             end
             playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
-            playerReport[report.attacker].weaponHash = report.weaponHash
+            playerReport[report.victim].weaponHash = report.weaponHash
         end
     end
     return playerReport
