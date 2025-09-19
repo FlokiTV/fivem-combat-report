@@ -70,3 +70,8 @@ Games.data = {
         }
     }
 }
+
+RegisterNetEvent("combat:report")
+AddEventHandler("combat:report", function(payload)
+    local src = source
+end)
