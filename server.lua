@@ -78,11 +78,11 @@ local function startRound(roundId)
     game.rounds.data[roundId] = {}
 end
 
-local function endRound(roundId)
+local function nextRound(roundId)
     local game = Games.data['matchmaking-01']
     if not game then return end
-    game.rounds.current = 0
-    game.rounds.data[roundId] = nil
+    game.rounds.current = roundId + 1
+    game.rounds.data[roundId] = {}
 end
 
 local function insertCombatReport(victim, report)
@@ -140,4 +140,11 @@ RegisterNetEvent("combat:report")
 AddEventHandler("combat:report", function(payload)
     local src = source
     insertCombatReport(src, payload)
+end)
+
+RegisterNetEvent("combat:requestPlayerReport")
+AddEventHandler("combat:requestPlayerReport", function(payload)
+    local src = source
+    local playerReport = getPlayerRoundReport(src)
+    TriggerClientEvent("combat:playerReport", src, playerReport)
 end)
