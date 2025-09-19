@@ -1,5 +1,13 @@
 local Games = {}
 
+Games.weapons = {}
+Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
+Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
+
+local function getWeaponName(weaponHash)
+    return Games.weapons[weaponHash] or 'Unknown'
+end
+
 Games.data = {
     ['matchmaking-01'] = {
         players = {
@@ -121,7 +129,7 @@ local function getPlayerRoundReport(player, roundId)
                     damageTaken = 0,
                     damageDone = 0,
                     weaponHash = report.weaponHash,
-                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                    weaponModel = getWeaponName(report.weaponHash),
                 }
             end
 
@@ -137,7 +145,7 @@ local function getPlayerRoundReport(player, roundId)
                     damageTaken = 0,
                     damageDone = 0,
                     weaponHash = 0,
-                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                    weaponModel = getWeaponName(report.weaponHash)
                 }
             end
             playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
