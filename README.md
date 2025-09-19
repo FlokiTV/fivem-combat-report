@@ -69,20 +69,22 @@ end)
 ### Player Report Structure
 ```lua
 {
-    name = "PlayerName",
-    damageTaken = 150,
-    damageDone = 200,
-    weaponHash = 0x123,
-    weaponModel = "Pistol",
-    damageBonesTaken = {
-        head = { damage = 50, hits = 2 },
-        chest = { damage = 75, hits = 3 },
-        foot = { damage = 25, hits = 1 }
-    },
-    damageBonesDone = {
-        head = { damage = 100, hits = 4 },
-        chest = { damage = 75, hits = 3 },
-        foot = { damage = 25, hits = 1 }
+    [playerId]{
+        name = "PlayerName",
+        damageTaken = 150,
+        damageDone = 200,
+        weaponHash = 0x123,
+        weaponModel = "Pistol",
+        damageBonesTaken = {
+            head = { damage = 50, hits = 2 },
+            chest = { damage = 75, hits = 3 },
+            foot = { damage = 25, hits = 1 }
+        },
+        damageBonesDone = {
+            head = { damage = 100, hits = 4 },
+            chest = { damage = 75, hits = 3 },
+            foot = { damage = 25, hits = 1 }
+        }
     }
 }
 ```
