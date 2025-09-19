@@ -10,7 +10,6 @@ A comprehensive combat tracking and reporting system for FiveM servers that prov
 - **Player Statistics**: Provides comprehensive damage taken/dealt statistics per player
 - **Body Part Analysis**: Categorizes hits by head, chest, and foot regions
 - **Weapon Recognition**: Identifies and logs weapon types used in combat
-- **Group Management**: Supports team-based combat with attacker/defender roles
 
 ## How It Works
 
@@ -54,6 +53,7 @@ end)
 ```
 
 ## Data Structure
+example: [https://onecompiler.com/lua/43x7zty26](https://onecompiler.com/lua/43x7zty26)
 
 ### Combat Report Payload
 ```lua

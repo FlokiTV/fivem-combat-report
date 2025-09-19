@@ -26,10 +26,6 @@ Games.bones[5] = {
     group = "head"
 }
 
-local function getWeaponName(weaponHash)
-    return Games.weapons[weaponHash] or 'Unknown'
-end
-
 Games.data = {
     ['matchmaking-01'] = {
         players = {
@@ -101,22 +97,29 @@ Games.data = {
     }
 }
 
+--
+local roomName = 'matchmaking-01'
+
+local function getWeaponName(weaponHash)
+    return Games.weapons[weaponHash] or 'Unknown'
+end
+
 local function startRound(roundId)
-    local game = Games.data['matchmaking-01']
+    local game = Games.data[roomName]
     if not game then return end
     game.rounds.current = roundId
     game.rounds.data[roundId] = {}
 end
 
 local function nextRound(roundId)
-    local game = Games.data['matchmaking-01']
+    local game = Games.data[roomName]
     if not game then return end
     game.rounds.current = roundId + 1
     game.rounds.data[roundId] = {}
 end
 
 local function getPlayerName(player)
-    local game = Games.data['matchmaking-01']
+    local game = Games.data[roomName]
     if not game then return end
     local playerData = game.players.data
     if not playerData then return end
@@ -126,7 +129,7 @@ local function getPlayerName(player)
 end
 
 local function insertCombatReport(victim, report)
-    local game = Games.data['matchmaking-01']
+    local game = Games.data[roomName]
     if not game then return end
     local roundId = game.rounds.current
     if roundId == 0 then return end
@@ -134,8 +137,46 @@ local function insertCombatReport(victim, report)
     table.insert(game.rounds.data[roundId], report)
 end
 
+local function initPlayerReport(player)
+    return {
+        name = getPlayerName(player),
+        damageTaken = 0,
+        damageDone = 0,
+        weaponHash = nil,
+        weaponModel = nil,
+        damageBonesTaken = {
+            head = {
+                damage = 0,
+                hits = 0,
+            },
+            chest = {
+                damage = 0,
+                hits = 0,
+            },
+            foot = {
+                damage = 0,
+                hits = 0,
+            },
+        },
+        damageBonesDone = {
+            head = {
+                damage = 0,
+                hits = 0,
+            },
+            chest = {
+                damage = 0,
+                hits = 0,
+            },
+            foot = {
+                damage = 0,
+                hits = 0,
+            },
+        },
+    }
+end
+
 local function getPlayerRoundReport(player, roundId)
-    local game = Games.data['matchmaking-01']
+    local game = Games.data[roomName]
     if not game then return end
     if not roundId then return end
     local reports = game.rounds.data[roundId]
@@ -146,53 +187,20 @@ local function getPlayerRoundReport(player, roundId)
         if report.victim == player then
             -- ensure attacker report
             if not playerReport[report.attacker] then
-                playerReport[report.attacker] = {
-                    name = getPlayerName(report.attacker),
-                    damageTaken = 0,
-                    damageDone = 0,
-                    damageBonesTaken = {
-                        head = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        chest = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        foot = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                    },
-                    damageBonesDone = {
-                        head = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        chest = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        foot = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                    },
-                    weaponHash = report.weaponHash,
-                    weaponModel = getWeaponName(report.weaponHash)
-                }
+                playerReport[report.attacker] = initPlayerReport(report.attacker)
             end
 
             playerReport[report.attacker].damageTaken = playerReport[report.attacker].damageTaken + report.amount
             playerReport[report.attacker].weaponHash = report.weaponHash
+            playerReport[report.attacker].weaponModel = getWeaponName(report.weaponHash)
             -- map damage by bone
             if report.hitBone then
                 local boneGroup = Games.bones[report.hitBone].group
                 if boneGroup then
                     playerReport[report.attacker].damageBonesTaken[boneGroup].damage = playerReport[report.attacker]
-                    .damageBonesTaken[boneGroup].damage + report.amount
+                        .damageBonesTaken[boneGroup].damage + report.amount
                     playerReport[report.attacker].damageBonesTaken[boneGroup].hits = playerReport[report.attacker]
-                    .damageBonesTaken[boneGroup].hits + 1
+                        .damageBonesTaken[boneGroup].hits + 1
                 end
             end
         end
@@ -200,53 +208,20 @@ local function getPlayerRoundReport(player, roundId)
         if report.attacker == player then
             -- ensure victim report
             if not playerReport[report.victim] then
-                playerReport[report.victim] = {
-                    name = getPlayerName(report.victim),
-                    damageTaken = 0,
-                    damageDone = 0,
-                    weaponHash = 0,
-                    damageBonesTaken = {
-                        head = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        chest = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        foot = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                    },
-                    damageBonesDone = {
-                        head = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        chest = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                        foot = {
-                            damage = 0,
-                            hits = 0,
-                        },
-                    },
-                    weaponModel = getWeaponName(report.weaponHash)
-                }
+                playerReport[report.victim] = initPlayerReport(report.victim)
             end
-            
+
             playerReport[report.victim].damageDone = playerReport[report.victim].damageDone + report.amount
             playerReport[report.victim].weaponHash = report.weaponHash
+            playerReport[report.victim].weaponModel = getWeaponName(report.weaponHash)
             -- map damage by bone
             if report.hitBone then
                 local boneGroup = Games.bones[report.hitBone].group
                 if boneGroup then
                     playerReport[report.victim].damageBonesDone[boneGroup].damage = playerReport[report.victim]
-                    .damageBonesDone[boneGroup].damage + report.amount
+                        .damageBonesDone[boneGroup].damage + report.amount
                     playerReport[report.victim].damageBonesDone[boneGroup].hits = playerReport[report.victim]
-                    .damageBonesDone[boneGroup].hits + 1
+                        .damageBonesDone[boneGroup].hits + 1
                 end
             end
         end
