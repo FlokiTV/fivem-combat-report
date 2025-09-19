@@ -69,7 +69,7 @@ end)
 ### Player Report Structure
 ```lua
 {
-    [playerId]{
+    [playerId] = {
         name = "PlayerName",
         damageTaken = 150,
         damageDone = 200,
