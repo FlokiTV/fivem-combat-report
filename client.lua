@@ -16,11 +16,15 @@ AddEventHandler("gameEventTriggered", function(name, args)
 
         local myselfPed = PlayerPedId()
         if victim and victim == myselfPed then
+            -- pega o bone atingido
+            local success, bone = GetPedLastDamageBone(myselfPed)
+            local boneHit = success and bone or nil
             sendCombatReport({
-                attacker = GetPlayerServerId(attacker),
-                amount = damageAmount,
+                attacker   = GetPlayerServerId(attacker),
+                amount     = damageAmount,
                 weaponHash = weaponHash,
-                timestamp = os.time()
+                hitBone    = boneHit,
+                timestamp  = os.time()
             })
         end
     end
