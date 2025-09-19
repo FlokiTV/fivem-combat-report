@@ -101,21 +101,36 @@ local function getPlayerRoundReport(player)
     if roundId == 0 then return end
     local reports = game.rounds.data[roundId]
     if not reports then return end
-    -- map all damages on round
     local myReport = {}
     for _, report in ipairs(reports) do
+        -- map all damage taken on round
         if report.victim == player then
             -- ensure attacker report
             if not myReport[report.attacker] then
                 myReport[report.attacker] = {
-                    attacker = report.attacker,
-                    amount = 0,
+                    damageTaken = 0,
+                    damageDone = 0,
                     weaponHash = report.weaponHash,
-                    weaponModel = report.weaponModel,
-                    timestamp = report.timestamp
+                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
                 }
             end
-            myReport[report.attacker].amount = myReport[report.attacker].amount + report.amount
+
+            myReport[report.attacker].damageTaken = myReport[report.attacker].damageTaken + report.amount
+            myReport[report.attacker].weaponHash = report.weaponHash
+        end
+        -- map all damage done on round
+        if report.attacker == player then
+            -- ensure victim report
+            if not myReport[report.victim] then
+                myReport[report.victim] = {
+                    damageTaken = 0,
+                    damageDone = 0,
+                    weaponHash = 0,
+                    -- weaponModel = report.weaponModel, TODO: Get from weapons hash map
+                }
+            end
+            myReport[report.victim].damageDone = myReport[report.victim].damageDone + report.amount
+            myReport[report.attacker].weaponHash = report.weaponHash
         end
     end
     return myReport
