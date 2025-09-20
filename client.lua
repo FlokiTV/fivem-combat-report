@@ -122,3 +122,8 @@ RegisterCommand("report", function(source, args, rawCommand)
     print("Thread iniciada!")
     TriggerServerEvent("combat:requestPlayerReport")
 end, false)
+
+-- next round
+RegisterCommand("nextround", function(source, args, rawCommand)
+    TriggerServerEvent("combat:nextRound")
+end, false)
