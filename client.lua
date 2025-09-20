@@ -1,3 +1,33 @@
+function DrawTextCustom(x, y, text, scale, color, font, center)
+    -- Defaults
+    scale  = scale or 0.35
+    font   = font or 0
+    color  = color or { r = 255, g = 255, b = 255, a = 255 }
+    center = center or false
+
+    SetTextFont(font)
+    SetTextProportional(false)
+    SetTextScale(scale, scale)
+    SetTextColour(color.r, color.g, color.b, color.a)
+    SetTextCentre(center)
+    SetTextEntry("STRING")
+    AddTextComponentString(text)
+    DrawText(x, y)
+end
+
+local function drawCombatReport(y, color)
+    DrawTextCustom(0.80, y, "out: 80", 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.02, "head: 0", 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.04, "chest: 0", 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.06, "legs: 0", 0.45, color, 4, false)
+    DrawTextCustom(0.84, y, "Floki", 0.45, color, 4, false)
+    DrawTextCustom(0.84, y + 0.02, "Pistol", 0.45, color, 4, false)
+    DrawTextCustom(0.88, y, "in: 145", 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.02, "head: 0", 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.04, "chest: 0", 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.06, "legs: 0", 0.45, color, 4, false)
+end
+
 local function sendCombatReport(payload)
     TriggerServerEvent("combat:report", payload)
 end
@@ -31,12 +61,13 @@ AddEventHandler("gameEventTriggered", function(name, args)
         local hitMaterial = args[13] -- returns indices from materials.dat
 
         local myselfPed = PlayerPedId()
+        local damagerId = NetworkGetNetworkIdFromEntity(damager)
         if victim and victim == myselfPed then
             -- pega o bone atingido
             local success, bone = GetPedLastDamageBone(myselfPed)
             local boneHit = success and bone or nil
             sendCombatReport({
-                attacker   = GetPlayerServerId(damager),
+                attacker   = damagerId,
                 amount     = damageConverted,
                 weaponHash = weaponUsed,
                 hitBone    = boneHit,
@@ -49,39 +80,8 @@ end)
 -- receive player round report
 RegisterNetEvent("combat:playerReport")
 AddEventHandler("combat:playerReport", function(playerReport)
-    print("playerReport", playerReport)
+    dumpTable(playerReport)
 end)
-
-
-function DrawTextCustom(x, y, text, scale, color, font, center)
-    -- Defaults
-    scale  = scale or 0.35
-    font   = font or 0
-    color  = color or { r = 255, g = 255, b = 255, a = 255 }
-    center = center or false
-
-    SetTextFont(font)
-    SetTextProportional(false)
-    SetTextScale(scale, scale)
-    SetTextColour(color.r, color.g, color.b, color.a)
-    SetTextCentre(center)
-    SetTextEntry("STRING")
-    AddTextComponentString(text)
-    DrawText(x, y)
-end
-
-local function drawCombatReport(y, color)
-    DrawTextCustom(0.80, y, "out: 80", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.02, "head: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.04, "chest: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.06, "legs: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.84, y, "Floki", 0.45, color, 4, false)
-    DrawTextCustom(0.84, y + 0.02, "Pistol", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y, "in: 145", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.02, "head: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.04, "chest: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.06, "legs: 0", 0.45, color, 4, false)
-end
 
 local color = { r = 255, g = 255, b = 255, a = 255 }
 
@@ -100,4 +100,10 @@ end)
 RegisterCommand("givepistol", function(source, args, rawCommand)
     local myselfPed = PlayerPedId()
     GiveWeaponToPed(myselfPed, GetHashKey('WEAPON_PISTOL'), 100, false, true)
+end, false)
+
+-- request report
+RegisterCommand("report", function(source, args, rawCommand)
+    print("combat:requestPlayerReport")
+    TriggerServerEvent("combat:requestPlayerReport")
 end, false)
