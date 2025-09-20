@@ -16,16 +16,16 @@ function DrawTextCustom(x, y, text, scale, color, font, center)
 end
 
 local function drawCombatReport(y, color, report)
-    DrawTextCustom(0.80, y, "out: " .. round(report.damageTaken), 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.02, "head: " .. round(report.damageBonesTaken.head.damage), 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.04, "chest: " .. round(report.damageBonesTaken.chest.damage), 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.06, "legs: " .. round(report.damageBonesTaken.foot.damage), 0.45, color, 4, false)
+    DrawTextCustom(0.78, y, "out: " .. round(report.damageTaken), 0.45, color, 4, false)
+    DrawTextCustom(0.78, y + 0.02, "head: " .. round(report.damageBonesTaken.head.damage) .. " x" .. report.damageBonesTaken.head.hits, 0.45, color, 4, false)
+    DrawTextCustom(0.78, y + 0.04, "chest: " .. round(report.damageBonesTaken.chest.damage) .. " x" .. report.damageBonesTaken.chest.hits, 0.45, color, 4, false)
+    DrawTextCustom(0.78, y + 0.06, "legs: " .. round(report.damageBonesTaken.foot.damage) .. " x" .. report.damageBonesTaken.foot.hits, 0.45, color, 4, false)
     DrawTextCustom(0.84, y, report.name, 0.45, color, 4, false)
     DrawTextCustom(0.84, y + 0.02, report.weaponModel, 0.45, color, 4, false)
     DrawTextCustom(0.90, y, "in: " .. round(report.damageDone), 0.45, color, 4, false)
-    DrawTextCustom(0.90, y + 0.02, "head: " .. round(report.damageBonesDone.head.damage), 0.45, color, 4, false)
-    DrawTextCustom(0.90, y + 0.04, "chest: " .. round(report.damageBonesDone.chest.damage), 0.45, color, 4, false)
-    DrawTextCustom(0.90, y + 0.06, "legs: " .. round(report.damageBonesDone.foot.damage), 0.45, color, 4, false)
+    DrawTextCustom(0.90, y + 0.02, "head: " .. round(report.damageBonesDone.head.damage) .. " x" .. report.damageBonesDone.head.hits, 0.45, color, 4, false)
+    DrawTextCustom(0.90, y + 0.04, "chest: " .. round(report.damageBonesDone.chest.damage) .. " x" .. report.damageBonesDone.chest.hits, 0.45, color, 4, false)
+    DrawTextCustom(0.90, y + 0.06, "legs: " .. round(report.damageBonesDone.foot.damage) .. " x" .. report.damageBonesDone.foot.hits, 0.45, color, 4, false)
 end
 
 local function sendCombatReport(payload)
