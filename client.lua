@@ -61,14 +61,14 @@ AddEventHandler("gameEventTriggered", function(name, args)
         local hitMaterial = args[13] -- returns indices from materials.dat
 
         local myselfPed = PlayerPedId()
-        local damagerId = damager == -1 and NetworkGetNetworkIdFromEntity(myselfPed) or
-        NetworkGetNetworkIdFromEntity(damager)
+        local damagerId = damager == -1 and NetworkGetPlayerIndexFromPed(myselfPed) or
+        NetworkGetPlayerIndexFromPed(damager)
         if victim and victim == myselfPed then
             -- pega o bone atingido
             local success, bone = GetPedLastDamageBone(myselfPed)
             local boneHit = success and bone or nil
             sendCombatReport({
-                attacker   = damagerId,
+                attacker   = GetPlayerServerId(damagerId),
                 amount     = damageConverted,
                 weaponHash = weaponUsed,
                 hitBone    = boneHit,
@@ -85,7 +85,7 @@ local threadRunning = false
 -- receive player round report
 RegisterNetEvent("combat:playerReport")
 AddEventHandler("combat:playerReport", function(playerReport)
-    dumpTable(playerReport)
+    -- dumpTable(playerReport)
     Citizen.CreateThread(function()
         while threadRunning do
             Citizen.Wait(5)
@@ -103,6 +103,12 @@ end)
 RegisterCommand("givepistol", function(source, args, rawCommand)
     local myselfPed = PlayerPedId()
     GiveWeaponToPed(myselfPed, GetHashKey('WEAPON_PISTOL'), 100, false, true)
+end, false)
+
+-- give rifle
+RegisterCommand("giverifle", function(source, args, rawCommand)
+    local myselfPed = PlayerPedId()
+    GiveWeaponToPed(myselfPed, GetHashKey('weapon_assaultrifle'), 100, false, true)
 end, false)
 
 -- request report
