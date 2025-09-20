@@ -233,13 +233,14 @@ RegisterNetEvent("combat:report")
 AddEventHandler("combat:report", function(payload)
     local src = source
     insertCombatReport(src, payload)
-    print("combat:report", src)
-    dumpTable(getPlayerRoundReport(src, 1))
 end)
 
 RegisterNetEvent("combat:requestPlayerReport")
-AddEventHandler("combat:requestPlayerReport", function(payload)
+AddEventHandler("combat:requestPlayerReport", function()
     local src = source
-    local playerReport = getPlayerRoundReport(src)
+    local round = Games.data[roomName].rounds.current
+    print("combat:requestPlayerReport", src)
+    local playerReport = getPlayerRoundReport(src, round)
+    dumpTable(Games.data[roomName].rounds.data[round])
     TriggerClientEvent("combat:playerReport", src, playerReport)
 end)
