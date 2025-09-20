@@ -15,17 +15,17 @@ function DrawTextCustom(x, y, text, scale, color, font, center)
     DrawText(x, y)
 end
 
-local function drawCombatReport(y, color)
-    DrawTextCustom(0.80, y, "out: 80", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.02, "head: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.04, "chest: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.80, y + 0.06, "legs: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.84, y, "Floki", 0.45, color, 4, false)
-    DrawTextCustom(0.84, y + 0.02, "Pistol", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y, "in: 145", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.02, "head: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.04, "chest: 0", 0.45, color, 4, false)
-    DrawTextCustom(0.88, y + 0.06, "legs: 0", 0.45, color, 4, false)
+local function drawCombatReport(y, color, report)
+    DrawTextCustom(0.80, y, "out: " .. report.damageTaken, 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.02, "head: " .. report.damageBonesTaken.head.damage, 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.04, "chest: " .. report.damageBonesTaken.chest.damage, 0.45, color, 4, false)
+    DrawTextCustom(0.80, y + 0.06, "legs: " .. report.damageBonesTaken.foot.damage, 0.45, color, 4, false)
+    DrawTextCustom(0.84, y, report.name, 0.45, color, 4, false)
+    DrawTextCustom(0.84, y + 0.02, report.weaponModel, 0.45, color, 4, false)
+    DrawTextCustom(0.88, y, "in: " .. report.damageDone, 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.02, "head: " .. report.damageBonesDone.head.damage, 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.04, "chest: " .. report.damageBonesDone.chest.damage, 0.45, color, 4, false)
+    DrawTextCustom(0.88, y + 0.06, "legs: " .. report.damageBonesDone.foot.damage, 0.45, color, 4, false)
 end
 
 local function sendCombatReport(payload)
@@ -61,7 +61,8 @@ AddEventHandler("gameEventTriggered", function(name, args)
         local hitMaterial = args[13] -- returns indices from materials.dat
 
         local myselfPed = PlayerPedId()
-        local damagerId = NetworkGetNetworkIdFromEntity(damager)
+        local damagerId = damager == -1 and NetworkGetNetworkIdFromEntity(myselfPed) or
+        NetworkGetNetworkIdFromEntity(damager)
         if victim and victim == myselfPed then
             -- pega o bone atingido
             local success, bone = GetPedLastDamageBone(myselfPed)
@@ -81,16 +82,18 @@ end)
 
 local color = { r = 255, g = 255, b = 255, a = 255 }
 local threadRunning = false
-
 -- receive player round report
 RegisterNetEvent("combat:playerReport")
 AddEventHandler("combat:playerReport", function(playerReport)
+    dumpTable(playerReport)
     Citizen.CreateThread(function()
         while threadRunning do
             Citizen.Wait(5)
             local y = 0.45
-            drawCombatReport(y, color)
-            drawCombatReport(y + 0.1, color)
+            for _, report in pairs(playerReport) do
+                drawCombatReport(y, color, report)
+                y = y + 0.1
+            end
         end
     end)
 end)
