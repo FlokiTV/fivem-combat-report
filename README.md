@@ -112,6 +112,14 @@ The following commands are available for players to use in-game:
 **Function**: 
 - Adds an assault rifle to the player's inventory
 
+### `/nextround`
+**Description**: Advances the combat system to the next round  
+**Usage**: `/nextround`  
+**Function**: 
+- Increments the current round number
+- Creates a new empty round data structure for tracking combat events
+- All subsequent combat reports will be tracked under the new round
+
 ## Body Parts Tracking
 
 The system categorizes damage by three main body regions:

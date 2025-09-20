@@ -101,6 +101,13 @@ Games.data = {
 --
 local roomName = 'matchmaking-01'
 
+local function nextRound()
+    local game = Games.data[roomName]
+    if not game then return end
+    game.rounds.current = game.rounds.current + 1
+    game.rounds.data[game.rounds.current] = {}
+end
+
 local function getWeaponName(weaponHash)
     return Games.weapons[weaponHash] or 'Unknown'
 end
@@ -230,4 +237,9 @@ AddEventHandler("combat:requestPlayerReport", function()
     local playerReport = getPlayerRoundReport(src, round)
     -- dumpTable(Games.data[roomName].rounds.data[round])
     TriggerClientEvent("combat:playerReport", src, playerReport)
+end)
+
+RegisterNetEvent("combat:nextRound")
+AddEventHandler("combat:nextRound", function()
+    nextRound()
 end)
