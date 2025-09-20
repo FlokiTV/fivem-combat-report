@@ -90,6 +90,14 @@ Citizen.CreateThread(function()
         Citizen.Wait(5)
         local y = 0.45
         drawCombatReport(y, color)
-        drawCombatReport(y+0.1, color)
+        drawCombatReport(y + 0.1, color)
     end
 end)
+
+-- test commands
+
+-- give pistol
+RegisterCommand("givepistol", function(source, args, rawCommand)
+    local myselfPed = PlayerPedId()
+    GiveWeaponToPed(myselfPed, GetHashKey('WEAPON_PISTOL'), 100, false, true)
+end, false)

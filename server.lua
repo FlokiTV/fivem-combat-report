@@ -5,23 +5,23 @@ Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
 Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
 
 Games.bones = {}
-Games.bones[1] = {
+Games.bones[57005] = {
     name = 'SKEL_R_HAND',
     group = "chest"
 }
-Games.bones[2] = {
+Games.bones[18905] = {
     name = 'SKEL_L_HAND',
     group = "chest"
 }
-Games.bones[3] = {
+Games.bones[52301] = {
     name = 'SKEL_R_FOOT',
     group = "foot"
 }
-Games.bones[4] = {
+Games.bones[14201] = {
     name = 'SKEL_L_FOOT',
     group = "foot"
 }
-Games.bones[5] = {
+Games.bones[31086] = {
     name = 'SKEL_HEAD',
     group = "head"
 }
@@ -194,7 +194,7 @@ local function getPlayerRoundReport(player, roundId)
             playerReport[report.attacker].weaponHash = report.weaponHash
             playerReport[report.attacker].weaponModel = getWeaponName(report.weaponHash)
             -- map damage by bone
-            if report.hitBone then
+            if report.hitBone and Games.bones[report.hitBone] then
                 local boneGroup = Games.bones[report.hitBone].group
                 if boneGroup then
                     playerReport[report.attacker].damageBonesTaken[boneGroup].damage = playerReport[report.attacker]
@@ -215,7 +215,7 @@ local function getPlayerRoundReport(player, roundId)
             playerReport[report.victim].weaponHash = report.weaponHash
             playerReport[report.victim].weaponModel = getWeaponName(report.weaponHash)
             -- map damage by bone
-            if report.hitBone then
+            if report.hitBone and Games.bones[report.hitBone] then
                 local boneGroup = Games.bones[report.hitBone].group
                 if boneGroup then
                     playerReport[report.victim].damageBonesDone[boneGroup].damage = playerReport[report.victim]
@@ -234,7 +234,7 @@ AddEventHandler("combat:report", function(payload)
     local src = source
     insertCombatReport(src, payload)
     print("combat:report", src)
-    dumpTable(payload)
+    dumpTable(getPlayerRoundReport(src, 1))
 end)
 
 RegisterNetEvent("combat:requestPlayerReport")
