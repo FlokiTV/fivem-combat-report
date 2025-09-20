@@ -6,13 +6,10 @@ end
 AddEventHandler("gameEventTriggered", function(name, args)
     if not name or not args then return end
     if name == "CEventNetworkEntityDamage" then
-        local victimNetId = args[1]
-        local attackerNetId = args[2]
+        local victim = args[1]
+        local attacker = args[2]
         local damageAmount = args[6]
         local weaponHash = args[7]
-
-        local victim = NetworkGetEntityFromNetworkId(victimNetId)
-        local attacker = NetworkGetEntityFromNetworkId(attackerNetId)
 
         local myselfPed = PlayerPedId()
         if victim and victim == myselfPed then
@@ -24,7 +21,7 @@ AddEventHandler("gameEventTriggered", function(name, args)
                 amount     = damageAmount,
                 weaponHash = weaponHash,
                 hitBone    = boneHit,
-                timestamp  = os.time()
+                timestamp  = GetGameTimer(),
             })
         end
     end

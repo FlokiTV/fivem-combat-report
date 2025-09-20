@@ -62,7 +62,7 @@ example: [https://onecompiler.com/lua/43x7zty26](https://onecompiler.com/lua/43x
     amount = damageAmount,    -- Amount of damage dealt
     weaponHash = weaponHash,  -- Hash of the weapon used
     hitBone = boneId,        -- ID of the bone/body part hit
-    timestamp = os.time()     -- Timestamp of the event
+    timestamp = GetGameTimer(),     -- Timestamp of the event
 }
 ```
 

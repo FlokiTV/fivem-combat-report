@@ -233,6 +233,7 @@ RegisterNetEvent("combat:report")
 AddEventHandler("combat:report", function(payload)
     local src = source
     insertCombatReport(src, payload)
+    dumpTable(payload)
 end)
 
 RegisterNetEvent("combat:requestPlayerReport")
