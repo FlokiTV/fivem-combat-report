@@ -3,7 +3,7 @@ local Games = {}
 Games.weapons = {}
 Games.weapons[-842959696] = 'Fall'
 Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
-Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
+Games.weapons[GetHashKey('weapon_assaultrifle')] = 'Rifle'
 
 Games.bones = {}
 Games.bones[57005] = {
@@ -103,20 +103,6 @@ local roomName = 'matchmaking-01'
 
 local function getWeaponName(weaponHash)
     return Games.weapons[weaponHash] or 'Unknown'
-end
-
-local function startRound(roundId)
-    local game = Games.data[roomName]
-    if not game then return end
-    game.rounds.current = roundId
-    game.rounds.data[roundId] = {}
-end
-
-local function nextRound(roundId)
-    local game = Games.data[roomName]
-    if not game then return end
-    game.rounds.current = roundId + 1
-    game.rounds.data[roundId] = {}
 end
 
 local function getPlayerName(player)
