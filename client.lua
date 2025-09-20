@@ -77,23 +77,23 @@ AddEventHandler("gameEventTriggered", function(name, args)
     end
 end)
 
+
+
+local color = { r = 255, g = 255, b = 255, a = 255 }
+local threadRunning = false
+
 -- receive player round report
 RegisterNetEvent("combat:playerReport")
 AddEventHandler("combat:playerReport", function(playerReport)
-    dumpTable(playerReport)
+    Citizen.CreateThread(function()
+        while threadRunning do
+            Citizen.Wait(5)
+            local y = 0.45
+            drawCombatReport(y, color)
+            drawCombatReport(y + 0.1, color)
+        end
+    end)
 end)
-
-local color = { r = 255, g = 255, b = 255, a = 255 }
-
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(5)
-        local y = 0.45
-        drawCombatReport(y, color)
-        drawCombatReport(y + 0.1, color)
-    end
-end)
-
 -- test commands
 
 -- give pistol
@@ -104,6 +104,12 @@ end, false)
 
 -- request report
 RegisterCommand("report", function(source, args, rawCommand)
-    print("combat:requestPlayerReport")
+    if threadRunning then
+        threadRunning = false
+        print("Thread parada!")
+        return
+    end
+    threadRunning = true
+    print("Thread iniciada!")
     TriggerServerEvent("combat:requestPlayerReport")
 end, false)
