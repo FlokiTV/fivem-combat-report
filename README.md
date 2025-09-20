@@ -53,7 +53,6 @@ end)
 ```
 
 ## Data Structure
-example: [https://onecompiler.com/lua/43x7zty26](https://onecompiler.com/lua/43x7zty26)
 
 ### Combat Report Payload
 ```lua
@@ -88,6 +87,30 @@ example: [https://onecompiler.com/lua/43x7zty26](https://onecompiler.com/lua/43x
     }
 }
 ```
+
+## Commands
+
+The following commands are available for players to use in-game:
+
+### `/report`
+**Description**: Toggles the combat report display on/off  
+**Usage**: `/report`  
+**Function**: 
+- Shows detailed combat statistics overlay on screen when enabled
+- Displays damage dealt/taken, weapon used, and body part hit statistics
+- Run the command again to hide the report display
+
+### `/givepistol`
+**Description**: Gives the player a pistol for testing purposes  
+**Usage**: `/givepistol`  
+**Function**: 
+- Adds a pistol to the player's inventory
+
+### `/giverifle`
+**Description**: Gives the player an assault rifle for testing purposes  
+**Usage**: `/giverifle`  
+**Function**: 
+- Adds an assault rifle to the player's inventory
 
 ## Body Parts Tracking
 
