@@ -1,6 +1,7 @@
 local Games = {}
 
 Games.weapons = {}
+Games.weapons[-842959696] = 'Fall'
 Games.weapons[GetHashKey('WEAPON_PISTOL')] = 'Pistol'
 Games.weapons[GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol MK2'
 
