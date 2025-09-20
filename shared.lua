@@ -1,4 +1,4 @@
-local function dumpTable(tbl, indent)
+function dumpTable(tbl, indent)
     indent = indent or 0
     local prefix = string.rep("  ", indent)
 
